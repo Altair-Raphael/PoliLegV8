@@ -40,7 +40,7 @@ Integração final dos módulos.
 
 ---
 
-## 🚀 Como Simular (Testbench)
+## Como Simular (Testbench)
 
 Para simular o processamento:
 
