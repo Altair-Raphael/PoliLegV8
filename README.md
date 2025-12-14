@@ -39,29 +39,3 @@ Integração final dos módulos.
 
 ---
 
-## Como Simular (Testbench)
-
-Para simular o processamento:
-
-1. **Configuração da Memória:**
-   Certifique-se de que os arquivos `memInstrPolilegv8.dat` e `memDadosInicialPolilegv8.dat` estão na pasta de execução do simulador ou referenciados corretamente no testbench.
-
-2. **Compilação:**
-   Compile todos os arquivos da pasta `src/` respeitando a ordem de dependência:
-   `Utils` -> `Parte 1` -> `Parte 2` -> `Parte 3`.
-
-3. **Execução:**
-   Execute o testbench `tb/part3/tb_polilegv8.vhd`.
-   
-   *O programa de teste executa uma série de instruções (LDUR, ADD, SUB, ORR, AND, CBZ, STUR) para validar o conjunto de instruções.*
-
----
-
-##  Estrutura de Entrega (.zip)
-
-Para submissão final, os arquivos devem ser organizados conforme o roteiro:
-* `P2-B1` e `P2-B2`: RegFile e ULA.
-* `P3`: Fluxo, Controle e Top Level.
-* Relatório PDF consolidado.
-
----
