@@ -1,3 +1,6 @@
+library ieee;
+use ieee.numeric_bit.all; -- Biblioteca permitida para substituir std_logic_1164
+
 entity reg is
     generic (dataSize: natural := 64);
     port (
@@ -17,10 +20,12 @@ begin
     process(clock, reset)
     begin
         -- Reset Assíncrono (Prioridade sobre o Clock)
+        -- Conforme enunciado: "reset é assíncrono e força todos os bits para zero" [cite: 86]
         if reset = '1' then
             storage <= (others => '0');
         
         -- Escrita Síncrona na Borda de Subida
+        -- Conforme enunciado: "borda de subida... enable é alto... gravada" [cite: 87]
         elsif (clock'event and clock = '1') then
             if enable = '1' then
                 storage <= d;
@@ -28,7 +33,8 @@ begin
         end if;
     end process;
 
-    -- Saída Assíncrona (Sempre reflete o estado interno)
+    -- Saída Assíncrona
+    -- Conforme enunciado: "saída q é assíncrona e mostra o conteúdo atual" [cite: 89]
     q <= storage;
 
 end architecture behavior;
