@@ -1,5 +1,5 @@
 library ieee;
-use ieee.numeric_bit.all; -- Biblioteca permitida para substituir std_logic_1164
+use ieee.numeric_bit.all;
 
 entity reg is
     generic (dataSize: natural := 64);

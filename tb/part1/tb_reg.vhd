@@ -1,12 +1,12 @@
 library ieee;
-use ieee.numeric_bit.all; 
+use ieee.numeric_bit.all;
 
 entity tb_reg is
 end entity tb_reg;
 
 architecture test of tb_reg is
 
-    -- 1. Declaração do Componente (Deve ser idêntica à Entity)
+    -- 1. Declaração do Componente
     component reg is
         generic (dataSize: natural := 64);
         port (
@@ -22,15 +22,19 @@ architecture test of tb_reg is
     constant DATA_WIDTH : natural := 64;
     constant CLK_PERIOD : time := 10 ns;
 
+    -- Sinais do DUT
     signal s_clock  : bit := '0';
     signal s_reset  : bit := '0';
     signal s_enable : bit := '0';
     signal s_d      : bit_vector(DATA_WIDTH-1 downto 0) := (others => '0');
     signal s_q      : bit_vector(DATA_WIDTH-1 downto 0);
+    
+    -- Sinal de Controle de Simulação (Para parar o clock)
+    signal s_simulating : boolean := true;
 
 begin
 
-    -- 3. Instanciação do DUT (Device Under Test)
+    -- 3. Instanciação do DUT
     DUT: reg
         generic map (dataSize => DATA_WIDTH)
         port map (
@@ -41,13 +45,16 @@ begin
             q      => s_q
         );
 
-    -- 4. Gerador de Clock
+    -- 4. Gerador de Clock (Com parada automática)
     p_clock: process
     begin
-        s_clock <= '0';
-        wait for CLK_PERIOD/2;
-        s_clock <= '1';
-        wait for CLK_PERIOD/2;
+        while s_simulating loop
+            s_clock <= '0';
+            wait for CLK_PERIOD/2;
+            s_clock <= '1';
+            wait for CLK_PERIOD/2;
+        end loop;
+        wait; -- Para o processo definitivamente
     end process;
 
     -- 5. Processo de Estímulos
@@ -64,14 +71,11 @@ begin
         -- Caso 2: Escrita Habilitada (Enable = 1)
         report "Teste: Escrita com Enable = 1..." severity note;
         s_enable <= '1';
-        -- Escreve o valor 10 (decimal)
-        s_d <= bit_vector(to_unsigned(10, DATA_WIDTH)); 
+        s_d <= bit_vector(to_unsigned(10, DATA_WIDTH)); -- Escreve 10
         wait for CLK_PERIOD;
-        
-        -- Verifica se gravou
         assert (unsigned(s_q) = 10) report "Erro: Falha na escrita (10)" severity error;
 
-        -- Escreve o valor Maior (ex: 0xFF...FF)
+        -- Teste com valor alto (todos 1s)
         s_d <= (others => '1');
         wait for CLK_PERIOD;
         assert (s_q = (DATA_WIDTH-1 downto 0 => '1')) report "Erro: Falha na escrita (All 1s)" severity error;
@@ -79,24 +83,25 @@ begin
         -- Caso 3: Retenção de Dado (Enable = 0)
         report "Teste: Retencao com Enable = 0..." severity note;
         s_enable <= '0';
-        s_d <= (others => '0'); -- Mudamos a entrada para 0
+        s_d <= (others => '0'); -- Tenta escrever 0
         wait for CLK_PERIOD;
-        
-        -- A saída deve continuar sendo '111...1' (valor anterior), ignorando o '0' da entrada
+        -- Deve manter o valor anterior (All 1s)
         assert (s_q = (DATA_WIDTH-1 downto 0 => '1')) report "Erro: Registrador nao reteve o valor!" severity error;
 
-        -- Caso 4: Reset durante operação
+        -- Caso 4: Reset Assíncrono
         report "Teste: Reset Assincrono..." severity note;
         s_enable <= '1';
-        wait for 2 ns; -- Avança um pouco no tempo (fora da borda do clock)
+        wait for 2 ns; -- Fora da borda do clock
         s_reset <= '1';
         wait for 1 ns; 
-        
-        -- Deve zerar imediatamente, sem esperar a próxima borda de subida
         assert (unsigned(s_q) = 0) report "Erro: Reset Assincrono falhou!" severity error;
 
-        report "Fim dos testes do REG." severity note;
-        wait; -- Para a simulação
+        -- Finalização
+        report "Fim dos testes do REG com SUCESSO." severity note;
+        
+        -- Desliga o clock e encerra a simulação
+        s_simulating <= false;
+        wait;
     end process;
 
 end architecture test;
