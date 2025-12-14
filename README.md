@@ -6,8 +6,7 @@ O projeto foi estruturado em 3 etapas incrementais, culminando na versão Monoci
 
 ##  Integrantes do Grupo
 * **Altair Raphael Alcazar Perez** | **NUSP: 14555666**
-* **Ana Luiza Vieira Custódio** | **NUSP: 13684508** [Número]
-
+* **Ana Luiza Vieira Custódio** | **NUSP: 13684508** 
 
 ##  Organização do Projeto
 
@@ -61,7 +60,6 @@ Para simular o processamento:
 ##  Estrutura de Entrega (.zip)
 
 Para submissão final, os arquivos devem ser organizados conforme o roteiro:
-* `P1-C1` a `P1-C8`: Componentes da Parte 1.
 * `P2-B1` e `P2-B2`: RegFile e ULA.
 * `P3`: Fluxo, Controle e Top Level.
 * Relatório PDF consolidado.
